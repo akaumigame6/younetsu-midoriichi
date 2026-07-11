@@ -30,7 +30,6 @@ model Creator {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  eventCreators   Event_Creator[]
   feedbackRecords FeedbackRecord[]
 }
 
@@ -106,22 +105,7 @@ model Event {
   // 「何でイベントを知ったか」の選択肢 (カンマ区切りなどで保存)
   referralSources        String?
 
-  eventCreators Event_Creator[]
   surveyRecords SurveyRecord[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// ========================
-// Event_Creator (中間テーブル)
-// ========================
-model Event_Creator {
-  id        String  @id @default(uuid())
-  eventId   String
-  event     Event   @relation(fields: [eventId], references: [id])
-  creatorId String
-  creator   Creator @relation(fields: [creatorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
