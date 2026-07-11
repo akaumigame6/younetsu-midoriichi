@@ -32,7 +32,9 @@
    <img src="./images/SURVEY_Motion.png" width="45%">
    <img src="./images/SURVEY_Check.png" width="45%">  
    閲覧者が感想を送るまでの動画  
-   https://github.com/user-attachments/assets/bfb1a998-4112-4e1b-bc58-b3cb0c30bab9
+
+https://github.com/user-attachments/assets/1070ed51-f8a4-4066-9779-7373490fdc9a
+
 
 3. 管理画面のダッシュボード  
    <img src="./images/ADMIN_Board.png" width="45%">
