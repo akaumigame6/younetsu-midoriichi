@@ -7,7 +7,13 @@ interface EventSettings {
   venue: string;
   dateFrom: string;
   dateTo: string;
-  surveyEnabled: boolean;
+  eventQ2Placeholder?: string;
+  eventQ3Placeholder?: string;
+  creatorQ2Placeholder?: string;
+  creatorQ3Placeholder?: string;
+  freeEventPlaceholder?: string;
+  freeCreatorPlaceholder?: string;
+  referralSources?: string;
 }
 
 interface EventSettingsContextType {
@@ -21,20 +27,36 @@ const defaultSettings: EventSettings = {
   venue: '〇〇ギャラリー',
   dateFrom: '',
   dateTo: '',
-  surveyEnabled: true,
+  eventQ2Placeholder: '例：〇〇の展示で、入り口の雰囲気から',
+  eventQ3Placeholder: '例：色使いがとても綺麗だったから',
+  creatorQ2Placeholder: '例：作品の〇〇の表現から',
+  creatorQ3Placeholder: '例：不思議な魅力があったから',
+  freeEventPlaceholder: '例：素晴らしい体験でした。特に〇〇が印象に残りました。',
+  freeCreatorPlaceholder: '例：素晴らしい体験でした。特に〇〇が印象に残りました。',
+  referralSources: 'X(旧Twitter),Instagram,ポスター/チラシ,知人の紹介,その他',
 };
 
 const EventSettingsContext = createContext<EventSettingsContextType | undefined>(undefined);
 
 export const EventSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<EventSettings>(() => {
-    const saved = localStorage.getItem('eventSettings');
-    return saved ? JSON.parse(saved) : defaultSettings;
-  });
+  const [settings, setSettings] = useState<EventSettings>(defaultSettings);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('eventSettings', JSON.stringify(settings));
-  }, [settings]);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('eventSettings');
+      if (saved) {
+        setSettings(JSON.parse(saved));
+      }
+      setIsMounted(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && typeof window !== 'undefined') {
+      localStorage.setItem('eventSettings', JSON.stringify(settings));
+    }
+  }, [settings, isMounted]);
 
   const updateSettings = (newSettings: Partial<EventSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));

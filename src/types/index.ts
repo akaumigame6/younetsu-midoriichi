@@ -17,21 +17,21 @@ export type SurveyInputType = 'free' | 'questions';
 export interface SurveyFreeData {
   type: 'free';
   content: string;
-  q1?: string;
+  q1?: string[];
   q2?: string;
   q3?: string;
-  referralSource?: string;
+  referralSources?: string[];
 }
 
 export interface SurveyQuestionsData {
   type: 'questions';
   selectedEmotions?: string[];
   freeEmotion?: string;
-  q1: string; // 感情まとめ文字列
+  q1: string[]; // 感情文字列配列
   q2: string; // どこで感じたか
   q3: string; // その理由
   content?: string;
-  referralSource?: string;
+  referralSources?: string[];
 }
 
 export type SurveyData = SurveyFreeData | SurveyQuestionsData;
@@ -44,7 +44,7 @@ export type FeedbackInputType = 'free' | 'questions';
 export interface FeedbackFreeData {
   type: 'free';
   content: string;
-  q1?: string;
+  q1?: string[];
   q2?: string;
   q3?: string;
 }
@@ -53,7 +53,7 @@ export interface FeedbackQuestionsData {
   type: 'questions';
   selectedEmotions?: string[];
   freeEmotion?: string;
-  q1: string;
+  q1: string[];
   q2: string;
   q3: string;
   content?: string;
@@ -67,10 +67,17 @@ export type FeedbackData = FeedbackFreeData | FeedbackQuestionsData;
 export interface FeedbackRecord {
   id: string;
   creatorId: string;
-  feedbackData: FeedbackData;
-  surveyData?: SurveyData;
+  viewerId?: string | null;
+  inputType: string;
+  content: string;
+  q1?: string[];
+  q2?: string | null;
+  q3?: string | null;
+  surveyRecordId?: string | null;
+  reaction?: string | null;
+  isRead: boolean;
   createdAt: string;
-  reaction?: 'read'; // 作家による既読反応
+  updatedAt: string;
 }
 
 // ========================
@@ -78,8 +85,16 @@ export interface FeedbackRecord {
 // ========================
 export interface SurveyRecord {
   id: string;
-  surveyData: SurveyData;
+  eventId: string;
+  viewerId?: string | null;
+  inputType: string;
+  content: string;
+  q1?: string[];
+  q2?: string | null;
+  q3?: string | null;
+  referralSources?: string[];
   createdAt: string;
+  updatedAt: string;
 }
 
 // ========================
