@@ -467,10 +467,11 @@ function SurveyWizardContent() {
 
             {/* Wheel Container */}
             <div style={{ 
-              width: '280px', 
-              height: '280px', 
+              width: '320px', 
+              height: '320px', 
               position: 'relative',
-              marginTop: '8px'
+              marginTop: '16px',
+              margin: '0 auto'
             }}>
               {/* Center decoration */}
               <div style={{
@@ -494,9 +495,9 @@ function SurveyWizardContent() {
               </div>
 
               {plutchikEmotions.map((emo) => {
-                const radius = 110; 
-                const x = 140 + radius * Math.cos(emo.angle * Math.PI / 180);
-                const y = 140 + radius * Math.sin(emo.angle * Math.PI / 180);
+                const radius = 115; 
+                const x = 160 + radius * Math.cos(emo.angle * Math.PI / 180);
+                const y = 160 + radius * Math.sin(emo.angle * Math.PI / 180);
                 const isSelected = selectedEmotions.includes(emo.name);
                 const isActive = activePrimary === emo.name;
                 const isOthersSelected = selectedEmotions.length > 0 && !isSelected;
@@ -523,14 +524,17 @@ function SurveyWizardContent() {
                       left: `${x}px`,
                       top: `${y}px`,
                       transform: 'translate(-50%, -50%)',
-                      width: '68px',
-                      height: '68px',
-                      borderRadius: '50%',
+                      width: '96px',
+                      minHeight: '54px',
+                      padding: '6px 4px',
+                      borderRadius: '27px',
                       backgroundColor: isSelected ? emo.color : 'var(--color-surface)',
                       border: `2px solid ${emo.color}`,
                       color: 'var(--color-text)',
-                      fontSize: '0.9rem',
+                      fontSize: '0.8rem',
                       fontWeight: 700,
+                      lineHeight: '1.2',
+                      wordBreak: 'keep-all',
                       boxShadow,
                       opacity,
                       transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
