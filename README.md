@@ -28,16 +28,19 @@
 ## 📸 スクリーンショット（UIイメージ）
 
 
-1. 来場者の入力画面
-   ![来場者入力画面](./images/SURVEY_Motion.png)
-   ![来場者入力画面](./images/SURVEY_Check.png)
-   ![来場者が感想を送るまで](./images/USER_POST_FeedBack_AI.mp4)
+1. 来場者の入力画面  
+   <img src="./images/SURVEY_Motion.png" width="45%">
+   <img src="./images/SURVEY_Check.png" width="45%">  
+   閲覧者が感想を送るまでの動画  
 
-2. 管理画面のダッシュボード
-   ![管理画面ダッシュボード](./images/ADMIN_Board.png)
+https://github.com/user-attachments/assets/1070ed51-f8a4-4066-9779-7373490fdc9a
 
-3. 作家さん用閲覧ページ
-   ![作家さん閲覧ページ](./images/CREATOR_Check.png)
+
+3. 管理画面のダッシュボード  
+   <img src="./images/ADMIN_Board.png" width="45%">
+
+5. 作家さん用閲覧ページ  
+   <img src="./images/CREATOR_Check.png" width="45%">
 
 ---
 
