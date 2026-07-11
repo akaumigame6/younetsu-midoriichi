@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Check, Copy, Save, Download } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { useEventSettings } from '../../context/EventSettingsContext';
-
+import { supabase } from '../../lib/supabase';
 export default function TabEventSettings() {
   const { settings, updateSettings } = useEventSettings();
   const [localSettings, setLocalSettings] = useState(settings);
@@ -20,6 +20,16 @@ export default function TabEventSettings() {
     return defaultReferrals;
   });
 
+  // Contextからの非同期ロード(DB取得)が完了したタイミングで localSettings を更新する
+  useEffect(() => {
+    if (settings.eventId && settings.eventId !== localSettings.eventId) {
+      setLocalSettings(settings);
+      if (settings.referralSources) {
+        setReferralList(settings.referralSources.split(',').map(s => s.trim()).filter(Boolean));
+      }
+    }
+  }, [settings, localSettings.eventId]);
+
   useEffect(() => {
     setLocalSettings(prev => ({ ...prev, referralSources: referralList.join(',') }));
   }, [referralList]);
@@ -34,9 +44,44 @@ export default function TabEventSettings() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     updateSettings(localSettings);
-    // TODO: Supabaseへの保存処理
+    
+    const targetId = localSettings.eventId || settings.eventId;
+    
+    if (targetId) {
+      const payload = {
+        id: targetId,
+        title: localSettings.eventName,
+        description: localSettings.eventDesc,
+        location: localSettings.venue,
+        date: localSettings.dateFrom ? new Date(localSettings.dateFrom).toISOString() : new Date().toISOString(),
+        eventQ2Placeholder: localSettings.eventQ2Placeholder,
+        eventQ3Placeholder: localSettings.eventQ3Placeholder,
+        creatorQ2Placeholder: localSettings.creatorQ2Placeholder,
+        creatorQ3Placeholder: localSettings.creatorQ3Placeholder,
+        freeEventPlaceholder: localSettings.freeEventPlaceholder,
+        freeCreatorPlaceholder: localSettings.freeCreatorPlaceholder,
+        referralSources: localSettings.referralSources,
+      };
+      
+      try {
+        const response = await fetch('/api/admin/event', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to save settings');
+        }
+      } catch (error) {
+        console.error('Failed to save settings:', error);
+      }
+    } else {
+      console.warn('eventId is missing. Cannot save to DB.');
+    }
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -88,15 +133,9 @@ export default function TabEventSettings() {
           value={localSettings.venue} onChange={(e) => setLocalSettings({...localSettings, venue: e.target.value})} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        <div className="input-group" style={{ marginBottom: 0 }}>
-          <label className="input-label">開催開始日</label>
-          <input type="date" className="input-text" value={localSettings.dateFrom} onChange={(e) => setLocalSettings({...localSettings, dateFrom: e.target.value})} />
-        </div>
-        <div className="input-group" style={{ marginBottom: 0 }}>
-          <label className="input-label">開催終了日</label>
-          <input type="date" className="input-text" value={localSettings.dateTo} onChange={(e) => setLocalSettings({...localSettings, dateTo: e.target.value})} />
-        </div>
+      <div className="input-group" style={{ marginBottom: 0 }}>
+        <label className="input-label">開催日</label>
+        <input type="date" className="input-text" value={localSettings.dateFrom} onChange={(e) => setLocalSettings({...localSettings, dateFrom: e.target.value})} />
       </div>
 
       <div style={{ padding: '16px', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>

@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface EventSettings {
+  eventId?: string;
   eventName: string;
   eventDesc: string;
   venue: string;
   dateFrom: string;
-  dateTo: string;
   eventQ2Placeholder?: string;
   eventQ3Placeholder?: string;
   creatorQ2Placeholder?: string;
@@ -26,7 +27,6 @@ const defaultSettings: EventSettings = {
   eventDesc: 'このイベントについての説明...',
   venue: '〇〇ギャラリー',
   dateFrom: '',
-  dateTo: '',
   eventQ2Placeholder: '例：〇〇の展示で、入り口の雰囲気から',
   eventQ3Placeholder: '例：色使いがとても綺麗だったから',
   creatorQ2Placeholder: '例：作品の〇〇の表現から',
@@ -40,23 +40,40 @@ const EventSettingsContext = createContext<EventSettingsContextType | undefined>
 
 export const EventSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<EventSettings>(defaultSettings);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('eventSettings');
-      if (saved) {
-        setSettings(JSON.parse(saved));
+    const fetchEvent = async () => {
+      try {
+        const { data, error } = await supabase.from('Event').select('*').limit(1).single();
+        if (data && !error) {
+          // DBのdate(DateTime型)を YYYY-MM-DD に変換
+          let dateStr = '';
+          if (data.date) {
+            dateStr = new Date(data.date).toISOString().split('T')[0];
+          }
+
+          setSettings({
+            eventId: data.id,
+            eventName: data.title || '',
+            eventDesc: data.description || '',
+            venue: data.location || '',
+            dateFrom: dateStr,
+            eventQ2Placeholder: data.eventQ2Placeholder || '',
+            eventQ3Placeholder: data.eventQ3Placeholder || '',
+            creatorQ2Placeholder: data.creatorQ2Placeholder || '',
+            creatorQ3Placeholder: data.creatorQ3Placeholder || '',
+            freeEventPlaceholder: data.freeEventPlaceholder || '',
+            freeCreatorPlaceholder: data.freeCreatorPlaceholder || '',
+            referralSources: data.referralSources || '',
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch event settings', err);
       }
-      setIsMounted(true);
-    }
+    };
+    
+    fetchEvent();
   }, []);
-
-  useEffect(() => {
-    if (isMounted && typeof window !== 'undefined') {
-      localStorage.setItem('eventSettings', JSON.stringify(settings));
-    }
-  }, [settings, isMounted]);
 
   const updateSettings = (newSettings: Partial<EventSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));

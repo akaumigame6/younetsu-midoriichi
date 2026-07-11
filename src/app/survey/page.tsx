@@ -47,9 +47,9 @@ export default function EventSurvey() {
               <MapPin size={14} /> {settings.venue}
             </div>
           )}
-          {(settings.dateFrom || settings.dateTo) && (
+          {settings.dateFrom && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Calendar size={14} /> {settings.dateFrom} 〜 {settings.dateTo}
+              <Calendar size={14} /> {settings.dateFrom}
             </div>
           )}
         </div>
