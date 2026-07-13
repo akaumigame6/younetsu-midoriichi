@@ -20,7 +20,7 @@ function SurveyWizardContent() {
   );
   const [hasFetched, setHasFetched] = useState(false);
 
-  const { viewerId } = useViewerFeedback();
+  const { viewerId, isAuthReady } = useViewerFeedback();
   const { settings } = useEventSettings();
 
   const isEvent = context === 'event';
@@ -137,6 +137,10 @@ function SurveyWizardContent() {
 
   // ==== Submit Handler ====
   const handleSubmit = async () => {
+    if (!viewerId) {
+      alert('認証の初期化が完了していません。少し待ってから再度お試しください。');
+      return;
+    }
     setIsSubmitting(true);
     // 編集時は既存IDを使用
     const id = editId || Date.now().toString();
@@ -890,6 +894,15 @@ function SurveyWizardContent() {
       </div>
     );
   };
+
+  // 認証完了待ち
+  if (!isAuthReady) {
+    return (
+      <div className="content-area fade-in" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <p style={{ color: 'var(--color-text-light)' }}>読み込み中...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="content-area">
