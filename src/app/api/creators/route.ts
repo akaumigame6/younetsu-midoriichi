@@ -9,8 +9,8 @@ export async function GET() {
       select: {
         id: true,
         name: true,
-        circle: true,
-        imageUrl: true,
+        description: true,
+        iconUrl: true,
         createdAt: true,
         updatedAt: true,
       },

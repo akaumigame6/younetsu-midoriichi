@@ -28,9 +28,10 @@ export default function AdminDashboard() {
       fetch('/api/admin/feedbacks').then(res => res.json()),
       fetch('/api/admin/surveys').then(res => res.json())
     ]).then(([cData, fData, sData]) => {
-      setCreators(cData);
-      setFeedbacks(fData);
-      setSurveys(sData);
+      // エラーオブジェクトが返ってきた場合に .map is not a function でクラッシュするのを防ぐ
+      setCreators(Array.isArray(cData) ? cData : []);
+      setFeedbacks(Array.isArray(fData) ? fData : []);
+      setSurveys(Array.isArray(sData) ? sData : []);
       setLoading(false);
     }).catch(err => {
       console.error(err);
