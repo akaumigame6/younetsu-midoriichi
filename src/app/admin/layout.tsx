@@ -17,7 +17,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      
+      // セッションがない、または匿名ユーザー（来場者）の場合は弾く
+      if (!session || session.user.is_anonymous) {
         document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         router.push('/admin');
       } else {
@@ -29,7 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
+      if (event === 'SIGNED_OUT' || !session || session.user.is_anonymous) {
         document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         if (pathname !== '/admin') {
           router.push('/admin');

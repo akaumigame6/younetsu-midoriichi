@@ -18,7 +18,8 @@ export default function AdminLogin() {
     // 既にログイン済みの場合はダッシュボードへ自動遷移
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      // 通常ログイン（匿名でない）セッションの場合のみ自動遷移する
+      if (session && !session.user.is_anonymous) {
         // ローカルストレージにはセッションがあるがCookieが無い場合、Middlewareに弾かれて無限ループになるのを防ぐ
         document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax`;
         window.location.href = '/admin/dashboard';

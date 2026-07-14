@@ -6,6 +6,14 @@ export const revalidate = 0; // ◀ サーバサイドのキャッシュを無�
 export async function GET() {
   try {
     const creators = await prisma.creator.findMany({
+      select: {
+        id: true,
+        name: true,
+        circle: true,
+        imageUrl: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       orderBy: {
         createdAt: 'asc',
       },

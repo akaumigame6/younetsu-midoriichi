@@ -1,15 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
-import { supabase } from '../../../../lib/supabase';
-import { cookies } from 'next/headers';
-
-async function verifyAdmin() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('sb-access-token')?.value;
-  if (!token) return false;
-  const { data: { user }, error } = await supabase!.auth.getUser(token);
-  return !!user && !error;
-}
+import { verifyAdmin } from '../../../../lib/auth';
 
 export const revalidate = 0; // ◀ サーバサイドのキャッシュを無効化する設定
 
